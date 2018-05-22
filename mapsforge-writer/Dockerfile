@@ -1,15 +1,19 @@
 FROM ubuntu:18.04
 
+ARG APT_MIRROR='https://free.nchc.org.tw'
 ARG OSMOSIS_VER='0.45'
 ARG MAPSFORGE_VER='0.8'
 
 # Install packages.
-RUN apt-get update && apt-get install -y \
-  openjdk-8-jre-headless \
+RUN cd /etc/apt && \
+  cp sources.list sources.list.orig && \
+  sed "s/https\?:\/\/\(archive\|security\).ubuntu.com/${APT_MIRROR}/" sources.list.orig > sources.list && \
+  apt-get update && apt-get install -y \
+  wget \
+  unzip \
   python3-pip \
   python3-gdal \
-  unzip \
-  wget
+  openjdk-8-jre-headless
 
 # Install osmosis & mapsforge writer plugin.
 ENV PATH "$PATH:/usr/local/osmosis/bin"
