@@ -1,0 +1,10 @@
+version: "2.3"
+
+services:
+  mapsforge-stack:
+    container_name: sync-osmtw0
+    build: ./mapsforge-writer
+    image: mapsforge-writer:18.04
+    command: python3 /root/app/sync.py
+    volumes:
+      - ~/osm-data:/root/osm-data
