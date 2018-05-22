@@ -2,7 +2,7 @@ FROM ubuntu:18.04
 
 ARG APT_MIRROR='https://free.nchc.org.tw'
 ARG OSMOSIS_VER='0.45'
-ARG MAPSFORGE_VER='0.8'
+ARG MAPSFORGE_VER='0.8.0'
 
 # Install packages.
 RUN cd /etc/apt && \
