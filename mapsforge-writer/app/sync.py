@@ -212,7 +212,7 @@ class LandPolygonsSyncer(SyncerBase):
 
 class MapsforgeSyncer(SyncerBase):
 
-    OSM_CLIPPED = ''
+    SUB_POLYGONS = ''
     PBF_LATEST = ''
     PBF_MERGED = ''
     MAP_BBOX = '20.627996,118.150901,26.703049,123.031181'
@@ -220,17 +220,27 @@ class MapsforgeSyncer(SyncerBase):
     MAP_CONF = ''
 
     def __init__(self):
-        # TODO: Scan the latest PBF.
-        self.OSM_CLIPPED = self.LOCAL_PATH + 'land-polygons-taiwan/land_polygons.osm'
-        self.PBF_LATEST = self.LOCAL_PATH + 'taiwan-180520.osm.pbf'
-        self.PBF_MERGED = self.LOCAL_PATH + 'taiwan-merged.osm.pbf'
-        self.MAP_MERGED = self.LOCAL_PATH + 'taiwan-merged.map'
         self.MAP_CONF = self.APP_PATH + 'taiwan-tag-mapping.xml'
+        self.SUB_POLYGONS = self.LOCAL_PATH + 'land-polygons-taiwan/land_polygons.osm'
+
+    def __set_filename(self):
+        # Scan the latest PBF.
+        items = os.listdir(self.LOCAL_PATH)
+        file_pat = re.compile('taiwan-(\d{6}).osm.pbf')
+        date_str = ''
+        for i in items:
+            m = file_pat.match(i)
+            if m and m[1] > date_str:
+                date_str = m[1]
+
+        self.PBF_LATEST = self.LOCAL_PATH + 'taiwan-{}.osm.pbf'.format(date_str)
+        self.PBF_MERGED = self.LOCAL_PATH + 'taiwan-merged-{}.osm.pbf'.format(date_str)
+        self.MAP_MERGED = self.LOCAL_PATH + 'taiwan-merged-{}.map'.format(date_str)
 
     def __merge(self):
         # !!! Don't change the order of parameters, or some errors occur.
         COMMAND = 'osmosis --rb file={} --rx file={} --s --m --wb file={} omitmetadata=true'
-        os.system(COMMAND.format(self.PBF_LATEST, self.OSM_CLIPPED, self.PBF_MERGED))
+        os.system(COMMAND.format(self.PBF_LATEST, self.SUB_POLYGONS, self.PBF_MERGED))
 
     def __convert_to_map(self):
         COMMAND = 'osmosis --rb file={} --mapfile-writer file={} bbox={} tag-conf-file={} type=hd'
@@ -240,6 +250,7 @@ class MapsforgeSyncer(SyncerBase):
         print('Sync OSM data ...')
         oss = OSMSyncer()
         oss.sync()
+        self.__set_filename()
 
         print('Sync land polygons ...')
         lps = LandPolygonsSyncer()
