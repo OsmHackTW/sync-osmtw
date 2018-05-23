@@ -1,6 +1,8 @@
 # sync-osmtw
 Docker container to sync Taiwan subset of latest OSM.
 
+![image](convert-mapsforge.png)
+
 # Howto
 First execution.
 ```sh
