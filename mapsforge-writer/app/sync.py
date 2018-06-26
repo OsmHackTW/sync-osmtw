@@ -8,6 +8,7 @@ import time
 import datetime
 import shp2osm
 from bs4 import BeautifulSoup
+from smtp_notifier import Notifier
 
 class SyncerBase:
 
@@ -263,6 +264,8 @@ class MapsforgeSyncer(SyncerBase):
 def main():
     msr = MapsforgeSyncer()
     msr.sync()
+    with Notifier() as n:
+        n.notify('[sync-osmtw] New map was synchronized.', 'New map was synchronized.')
 
 if __name__ == '__main__':
     main()
