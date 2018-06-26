@@ -35,7 +35,7 @@ class Notifier:
         Copy, paste and modify this JSON into smtp_notify.json.
 
         {
-          "host": "msa.hinet.net",
+          "host": "msr.hinet.net",
           "port": 587,
           "user": "someone",
           "pass": "somepass",
